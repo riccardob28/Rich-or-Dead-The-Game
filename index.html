@@ -171,7 +171,7 @@
             table-layout: fixed;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-state;
         }
 
         .leaderboard-table {
@@ -393,58 +393,56 @@
             }
         }
 
-        // Show leaderboard
-        function showLeaderboard() {
-            leaderboardBody.innerHTML = '';
-            const scoresRef = database.ref('scores');
-            scoresRef.once('value').then((snapshot) => {
-                const scores = snapshot.val();
-                const scoresArray = [];
-                for (const key in scores) {
-                    if (scores.hasOwnProperty(key)) {
-                        scoresArray.push(scores[key]);
-                    }
-                }
-
-                // Ordinare i punteggi in ordine decrescente
-                scoresArray.sort((a, b) => b.score - a.score);
-
-                // Mostrare i primi 1000 punteggi (o meno se ce ne sono meno di 1000)
-                const topScores = scoresArray.slice(0, 1000);
-
-                topScores.forEach((entry, index) => {
-                    const row = document.createElement('tr');
-
-                    const rankCell = document.createElement('td');
-                    rankCell.className = 'rank-cell';
-                    rankCell.textContent = index + 1;
-
-                    const nicknameCell = document.createElement('td');
-                    nicknameCell.className = 'nickname-cell';
-                    nicknameCell.textContent = entry.nickname;
-
-                    const countryCell = document.createElement('td');
-                    countryCell.className = 'country-cell';
-                    countryCell.textContent = entry.country;
-
-                    const scoreCell = document.createElement('td');
-                    scoreCell.className = 'score-cell';
-                    scoreCell.textContent = formatScore(entry.score);
-
-                    row.appendChild(rankCell);
-                    row.appendChild(nicknameCell);
-                    row.appendChild(countryCell);
-                    row.appendChild(scoreCell);
-
-                    leaderboardBody.appendChild(row);
-                });
-            });
-
-            startScreen.classList.add('game-hidden');
-            gameScreen.classList.add('game-hidden');
-            leaderboardScreen.classList.remove('game-hidden');
-            leaderboardScreen.classList.add('game-active');
+// Show leaderboard
+function showLeaderboard() {
+    leaderboardBody.innerHTML = '';
+    const scoresRef = database.ref('scores');
+    scoresRef.once('value').then((snapshot) => {
+        const scores = snapshot.val();
+        const scoresArray = [];
+        for (const key in scores) {
+            if (scores.hasOwnProperty(key)) {
+                scoresArray.push(scores[key]);
+            }
         }
+
+        // Ordinare i punteggi in ordine decrescente
+        scoresArray.sort((a, b) => b.score - a.score);
+
+        // Mostrare tutti i punteggi (non limitare a 1000)
+        scoresArray.forEach((entry, index) => {
+            const row = document.createElement('tr');
+
+            const rankCell = document.createElement('td');
+            rankCell.className = 'rank-cell';
+            rankCell.textContent = index + 1;
+
+            const nicknameCell = document.createElement('td');
+            nicknameCell.className = 'nickname-cell';
+            nicknameCell.textContent = entry.nickname;
+
+            const countryCell = document.createElement('td');
+            countryCell.className = 'country-cell';
+            countryCell.textContent = entry.country;
+
+            const scoreCell = document.createElement('td');
+            scoreCell.className = 'score-cell';
+            scoreCell.textContent = formatScore(entry.score);
+
+            row.appendChild(rankCell);
+            row.appendChild(nicknameCell);
+            row.appendChild(countryCell);
+            row.appendChild(scoreCell);
+
+            leaderboardBody.appendChild(row);
+        });
+    });
+
+    startScreen.classList.add('game-hidden');
+    gameScreen.classList.add('game-hidden');
+    leaderboardScreen.classList.remove('game-hidden');
+    leaderboardScreen.classList.add('game-active');
+}
 
         // Event listeners
         startGameBtn.addEventListener('click', () => {
