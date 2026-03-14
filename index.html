@@ -79,9 +79,20 @@
             margin: 10px;
             transition: all 0.2s;
             width: auto;
+            padding: 10px;
+            font-size: 12px;
+            border: 2px solid #FFFF00;
+            background-color: #000;
+            color: #FFFF00;
+            font-family: 'Press Start 2P', cursive;
         }
 
         button:hover {
+            background-color: #FF0000;
+            color: #000;
+        }
+
+        button.active {
             background-color: #FF0000;
             color: #000;
         }
@@ -534,12 +545,22 @@ function showLeaderboard() {
 
         viewLeaderboardBtn.addEventListener('click', showLeaderboard);
 
-        playButton.addEventListener('click', playGame);
+        playButton.addEventListener('click', () => {
+            playButton.classList.add('active');
+            playGame();
+            setTimeout(() => {
+                playButton.classList.remove('active');
+            }, 200);
+        });
 
         stopButton.addEventListener('click', () => {
+            stopButton.classList.add('active');
             saveScore();
             currentWinnings = 0;
             currentWinningsDisplay.textContent = formatScore(currentWinnings);
+            setTimeout(() => {
+                stopButton.classList.remove('active');
+            }, 200);
         });
 
         backToStartBtn.addEventListener('click', () => {
