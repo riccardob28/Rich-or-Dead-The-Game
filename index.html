@@ -168,7 +168,7 @@
             background-color: #000;
             color: #FFFF00;
             width: 95%;
-            table-layout: fixed;
+            box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -178,16 +178,22 @@
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
+            border: 1px solid #FFFF00;
         }
 
         .leaderboard-table th, .leaderboard-table td {
             text-align: left;
-            padding: 6px;
-            border-bottom: 1px solid #FFFF00;
-            font-size: 11px;
-            word-break: break-word;
+             padding: 6px;
+             border-bottom: 1px solid #FFFF00;
+             font-size: 11px;
+             word-break: break-word;
+             border-left: 1px solid #FFFF00;
         }
 
+        .leaderboard-table td:first-child {
+             border-left: none;
+        }
+        
         .leaderboard-table th {
             font-size: 10px;
         }
@@ -244,6 +250,11 @@
         box-sizing: border-box;
     }
 
+    .leaderboard-table th, .leaderboard-table td {
+        font-size: 8px;
+        padding: 3px;
+    }
+    
     .rank-cell {
         width: 15%;
     }
