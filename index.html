@@ -161,13 +161,14 @@
 
         .leaderboard-container {
             max-height: 40vh;
+            overflow-x: hidden;
             overflow-y: auto;
             margin: 0 auto;
-            border: 2px solid #FFFF00;
-            padding: 10px;
+            border: 1px solid #FFFF00;
+            padding: 5px;
             background-color: #000;
             color: #FFFF00;
-            width: 95%;
+            width: 100%;
             box-sizing: border-box;
             display: flex;
             justify-content: center;
@@ -179,6 +180,8 @@
             border-collapse: collapse;
             table-layout: fixed;
             border: 1px solid #FFFF00;
+            margin: 0;
+            padding: 0;
         }
 
         .leaderboard-table th, .leaderboard-table td {
@@ -216,6 +219,8 @@
             text-align: right;
             width: 35%;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
        /* Media Query per dispositivi mobili */
 @media only screen and (max-width: 768px) {
@@ -260,7 +265,7 @@
     }
 
     .nickname-cell {
-        width: 35%;
+        width: 30%;
     }
 
     .country-cell {
@@ -268,8 +273,10 @@
     }
 
     .score-cell {
-        width: 30%;
+        width: 35%;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .leaderboard-table th, .leaderboard-table td {
