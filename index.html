@@ -408,6 +408,13 @@
             return score.toLocaleString('it-IT') + ' €';
         }
 
+        function activateButton(button) {
+            button.classList.add('active');
+            setTimeout(() => {
+                button.classList.remove('active');
+            }, 200);
+        }
+
         function playGame() {
             playClickSound();
             const randomOutcome = Math.random();
