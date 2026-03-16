@@ -538,10 +538,24 @@
 
         viewLeaderboardBtn.addEventListener('click', showLeaderboard);
 
-        playButton.addEventListener('click', playGame);
+                playButton.addEventListener('click', () => {
+            playButton.classList.add('active');
+            playGame();
+            setTimeout(() => {
+                playButton.classList.remove('active');
+            }, 200);
+        });
 
-        stopButton.addEventListener('click', saveScore);
-
+        stopButton.addEventListener('click', () => {
+            stopButton.classList.add('active');
+            saveScore();
+            currentWinnings = 0;
+            currentWinningsDisplay.textContent = formatScore(currentWinnings);
+            setTimeout(() => {
+                stopButton.classList.remove('active');
+            }, 200);
+        });
+        
         backToStartBtn.addEventListener('click', () => {
             playClickSound();
             leaderboardScreen.classList.add('game-hidden');
