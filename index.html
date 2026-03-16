@@ -240,6 +240,11 @@
     </style>
 </head>
 <body>
+    <!-- Audio Elements -->
+    <audio id="click-sound" src="https://raw.githubusercontent.com/riccardob28/Rich-or-Dead-The-Game/600e6957d99443f5f15ee548f40e51206454c166/clicksound.mp3" preload="auto"></audio>
+    <audio id="lose-sound" src="https://raw.githubusercontent.com/riccardob28/Rich-or-Dead-The-Game/600e6957d99443f5f15ee548f40e51206454c166/deadsound.mp3" preload="auto"></audio>
+    <audio id="win-sound" src="https://raw.githubusercontent.com/riccardob28/Rich-or-Dead-The-Game/600e6957d99443f5f15ee548f40e51206454c166/richsound.mp3" preload="auto"></audio>
+
     <!-- Start Screen -->
     <div class="container" id="start-screen">
         <h1 class="title">RICH OR DEAD?</h1>
@@ -389,13 +394,26 @@
         const currentWinningsDisplay = document.getElementById('current-winnings');
         const leaderboardBody = document.getElementById('leaderboard-body');
 
+        // Audio elements
+        const clickSound = document.getElementById('click-sound');
+        const loseSound = document.getElementById('lose-sound');
+        const winSound = document.getElementById('win-sound');
+
+        function playClickSound() {
+            clickSound.currentTime = 0;
+            clickSound.play();
+        }
+
         function formatScore(score) {
             return score.toLocaleString('it-IT') + ' €';
         }
 
         function playGame() {
+            playClickSound();
             const randomOutcome = Math.random();
             if (randomOutcome < 0.01) {
+                loseSound.currentTime = 0;
+                loseSound.play();
                 document.getElementById('dead-screen').style.display = 'flex';
                 setTimeout(() => {
                     document.getElementById('dead-screen').style.display = 'none';
@@ -409,7 +427,10 @@
         }
 
         function saveScore() {
+            playClickSound();
             if (currentWinnings > 0) {
+                winSound.currentTime = 0;
+                winSound.play();
                 document.getElementById('rich-screen').style.display = 'flex';
                 setTimeout(() => {
                     document.getElementById('rich-screen').style.display = 'none';
@@ -434,6 +455,7 @@
         }
 
         function showLeaderboard() {
+            playClickSound();
             leaderboardBody.innerHTML = '';
             const scoresRef = database.ref('scores');
             scoresRef.once('value').then((snapshot) => {
@@ -482,6 +504,7 @@
 
         // Event listeners
         startGameBtn.addEventListener('click', () => {
+            playClickSound();
             nickname = nicknameInput.value;
             selectedCountry = countrySelect.value;
             if (!nickname || !selectedCountry) {
@@ -494,12 +517,14 @@
         });
 
         howToPlayBtn.addEventListener('click', () => {
+            playClickSound();
             startScreen.classList.add('game-hidden');
             howToPlayScreen.classList.remove('game-hidden');
             howToPlayScreen.classList.add('game-active');
         });
 
         backToStartFromHowToPlayBtn.addEventListener('click', () => {
+            playClickSound();
             howToPlayScreen.classList.add('game-hidden');
             startScreen.classList.remove('game-hidden');
         });
@@ -511,9 +536,21 @@
         stopButton.addEventListener('click', saveScore);
 
         backToStartBtn.addEventListener('click', () => {
+            playClickSound();
             leaderboardScreen.classList.add('game-hidden');
             gameScreen.classList.remove('game-hidden');
             gameScreen.classList.add('game-active');
+        });
+
+        // Aggiungi il suono di click a tutti i pulsanti e input
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('click', playClickSound);
+        });
+
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('click', playClickSound);
         });
     </script>
 </body>
