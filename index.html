@@ -8,7 +8,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
-        // Configurazione Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAMMiCYnRiN6UwkhF3lVUHWNDjeQ_OVOqc",
             authDomain: "rich-or-dead-the-game-b01c5.firebaseapp.com",
@@ -18,8 +17,6 @@
             messagingSenderId: "103226010321",
             appId: "1:103226010321:web:6c11ce4f2cf89fb4ab73f0"
         };
-
-        // Inizializzare Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
     </script>
@@ -72,18 +69,18 @@
             color: #FFFF00;
             width: 100%;
             box-sizing: border-box;
+            cursor: pointer;
         }
 
         button {
-            cursor: pointer;
             margin: 10px;
-            transition: all 0.2s;
             width: auto;
+            transition: background-color 0.1s, color 0.1s;
         }
 
-        button:active {
-            background-color: #FF0000;
-            color: #000;
+        button.active {
+            background-color: #FF0000 !important;
+            color: #000 !important;
         }
 
         .game-container {
@@ -133,9 +130,11 @@
         }
 
         .dead-screen img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
 
         .how-to-play-container {
@@ -248,6 +247,11 @@
                 padding: 12px;
                 font-size: 12px;
             }
+
+            .dead-screen img {
+                width: 100%;
+                height: auto;
+            }
         }
     </style>
 </head>
@@ -344,7 +348,6 @@
                     </tr>
                 </thead>
                 <tbody id="leaderboard-body">
-                    <!-- Leaderboard entries will be added here via JS -->
                 </tbody>
             </table>
         </div>
@@ -357,13 +360,11 @@
     </div>
 
     <script>
-        // Game state
         let currentWinnings = 0;
         let highScore = 0;
         let nickname = "";
         let selectedCountry = "";
 
-        // DOM elements
         const startScreen = document.getElementById('start-screen');
         const howToPlayScreen = document.getElementById('how-to-play-screen');
         const gameScreen = document.getElementById('game-screen');
@@ -384,19 +385,17 @@
         const currentWinningsDisplay = document.getElementById('current-winnings');
         const leaderboardBody = document.getElementById('leaderboard-body');
 
-        // Format score as 1,000,000 €
         function formatScore(score) {
             return score.toLocaleString('it-IT') + ' €';
         }
 
-        // Game logic
         function playGame() {
             const randomOutcome = Math.random();
             if (randomOutcome < 0.01) {
                 document.getElementById('dead-screen').style.display = 'flex';
                 setTimeout(() => {
                     document.getElementById('dead-screen').style.display = 'none';
-                }, 1500); // 1.5 secondi
+                }, 1500);
                 currentWinnings = 0;
                 currentWinningsDisplay.textContent = formatScore(currentWinnings);
             } else {
@@ -405,17 +404,12 @@
             }
         }
 
-        // Save score to leaderboard
         function saveScore() {
-            if (currentWinnings > 0) {
-                // Puoi aggiungere un messaggio di vittoria qui se vuoi
-            }
             if (currentWinnings > highScore) {
                 highScore = currentWinnings;
                 highScoreDisplay.textContent = formatScore(highScore);
             }
 
-            // Salvare il punteggio nel database Firebase
             if (nickname && selectedCountry && currentWinnings > 0) {
                 const scoresRef = database.ref('scores');
                 scoresRef.push().set({
@@ -426,7 +420,6 @@
             }
         }
 
-        // Show leaderboard
         function showLeaderboard() {
             leaderboardBody.innerHTML = '';
             const scoresRef = database.ref('scores');
@@ -439,10 +432,8 @@
                     }
                 }
 
-                // Ordinare i punteggi in ordine decrescente
                 scoresArray.sort((a, b) => b.score - a.score);
 
-                // Mostrare tutti i punteggi (non limitare a 1000)
                 scoresArray.forEach((entry, index) => {
                     const row = document.createElement('tr');
 
@@ -471,13 +462,18 @@
                 });
             });
 
-            // Show leaderboard screen
             gameScreen.classList.add('game-hidden');
             leaderboardScreen.classList.remove('game-hidden');
             leaderboardScreen.classList.add('game-active');
         }
 
-        // Event listeners
+        function activateButton(button) {
+            button.classList.add('active');
+            setTimeout(() => {
+                button.classList.remove('active');
+            }, 200);
+        }
+
         startGameBtn.addEventListener('click', () => {
             nickname = nicknameInput.value;
             selectedCountry = countrySelect.value;
@@ -503,9 +499,13 @@
 
         viewLeaderboardBtn.addEventListener('click', showLeaderboard);
 
-        playButton.addEventListener('click', playGame);
+        playButton.addEventListener('click', () => {
+            activateButton(playButton);
+            playGame();
+        });
 
         stopButton.addEventListener('click', () => {
+            activateButton(stopButton);
             saveScore();
             currentWinnings = 0;
             currentWinningsDisplay.textContent = formatScore(currentWinnings);
