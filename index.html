@@ -79,17 +79,11 @@
             margin: 10px;
             transition: all 0.2s;
             width: auto;
-            padding: 10px;
-            font-size: 12px;
-            border: 2px solid #FFFF00;
-            background-color: #000;
-            color: #FFFF00;
-            font-family: 'Press Start 2P', cursive;
         }
 
-        button.active {
-            background-color: #FF0000 !important;
-            color: #000 !important;
+        button:active {
+            background-color: #FF0000;
+            color: #000;
         }
 
         .game-container {
@@ -122,28 +116,26 @@
         }
 
         .flash-message {
+            display: none;
+        }
+
+        .dead-screen {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #000;
-            display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 72px;
-            display: none;
             z-index: 100;
+            background-color: black;
         }
 
-        .flash-message.rich {
-            color: #00FF00;
-            text-shadow: 4px 4px 0 #FFD700;
-        }
-
-        .flash-message.dead {
-            color: #FF0000;
-            text-shadow: 4px 4px 0 #FFFF00;
+        .dead-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .how-to-play-container {
@@ -194,14 +186,6 @@
             word-break: break-word;
         }
 
-        .leaderboard-table td:first-child {
-             border-left: none;
-        }
-        
-        .leaderboard-table th {
-            font-size: 10px;
-        }
-
         .rank-cell {
             text-align: center;
             width: 15%;
@@ -217,70 +201,54 @@
         }
 
         .score-cell {
-            text-align: center;
+            text-align: right;
             width: 35%;
             white-space: nowrap;
         }
-       /* Media Query per dispositivi mobili */
-@media only screen and (max-width: 768px) {
-    body {
-        font-size: 10px;
-    }
 
-    .title {
-        font-size: 24px;
-    }
-    
-    .score-display div {
-        font-size: 12px; /* Riduci la dimensione del font */
-        margin-bottom: 10px; /* Riduci il margine inferiore */
-    }
+        /* Media Query per dispositivi mobili */
+        @media only screen and (max-width: 768px) {
+            body {
+                font-size: 10px;
+            }
 
-    #high-score-label, #high-score {
-        color: #9932CC;
-        font-size: 12px; /* Riduci la dimensione del font */
-        margin-bottom: 4px;
-    }
-    
-    .container {
-        width: 95%;
-        padding: 10px;
-    }
+            .title {
+                font-size: 24px;
+            }
 
-    .leaderboard-container {
-        width: 100%;
-        margin: 0;
-        padding: 0 5px;
-        box-sizing: border-box;
-    }
+            .score-display div {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
 
-    .leaderboard-table th, .leaderboard-table td {
-        font-size: 6px;
-        padding: 3px;
-    }
-    
-    .rank-cell {
-        width: 15%;
-    }
+            #high-score-label, #high-score {
+                color: #9932CC;
+                font-size: 12px;
+                margin-bottom: 4px;
+            }
 
-    .nickname-cell {
-        width: 30%;
-    }
+            .container {
+                width: 95%;
+                padding: 10px;
+            }
 
-    .country-cell {
-        width: 20%;
-    }
+            .leaderboard-container {
+                width: 100%;
+                margin: 0;
+                padding: 0 5px;
+                box-sizing: border-box;
+            }
 
-    .score-cell {
-        width: 35%;
-        white-space: nowrap;
-    }
+            .leaderboard-table th, .leaderboard-table td {
+                font-size: 6px;
+                padding: 3px;
+            }
 
-    button {
-        padding: 12px;
-        font-size: 12px;
-    }
-}
+            button {
+                padding: 12px;
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -335,15 +303,15 @@
     <div class="container game-container" id="how-to-play-screen">
         <h1 class="title">HOW TO PLAY</h1>
         <div class="how-to-play-container">
-    <ol>
-        <li>Enter a nickname (max 10 characters).</li>
-        <li>Select your country.</li>
-        <li>Click START to begin.</li>
-        <li>Click PLAY to earn 1,000,000 € (99% chance) or lose all your winnings (1% chance).</li>
-        <li>Click STOP to save your score.</li>
-        <li>The goal is to win as much money as possible. Top 1000 scores make the leaderboard.</li>
-    </ol>
-</div>
+            <ol>
+                <li>Enter a nickname (max 10 characters).</li>
+                <li>Select your country.</li>
+                <li>Click START to begin.</li>
+                <li>Click PLAY to earn 1,000,000 € (99% chance) or lose all your winnings (1% chance).</li>
+                <li>Click STOP to save your score.</li>
+                <li>The goal is to win as much money as possible. Top 1000 scores make the leaderboard.</li>
+            </ol>
+        </div>
         <button id="back-to-start-from-how-to-play">GOT IT</button>
     </div>
 
@@ -383,8 +351,10 @@
         <button id="back-to-start">BACK</button>
     </div>
 
-    <!-- Flash Message -->
-    <div class="flash-message" id="flash-message"></div>
+    <!-- Dead Screen -->
+    <div id="dead-screen" class="dead-screen">
+        <img id="skeleton-image" src="https://i.ibb.co/9mmv3Ycm/IMG-4776.jpg" alt="You Died">
+    </div>
 
     <script>
         // Game state
@@ -398,7 +368,6 @@
         const howToPlayScreen = document.getElementById('how-to-play-screen');
         const gameScreen = document.getElementById('game-screen');
         const leaderboardScreen = document.getElementById('leaderboard-screen');
-        const flashMessage = document.getElementById('flash-message');
 
         const nicknameInput = document.getElementById('nickname');
         const countrySelect = document.getElementById('country-select');
@@ -415,16 +384,6 @@
         const currentWinningsDisplay = document.getElementById('current-winnings');
         const leaderboardBody = document.getElementById('leaderboard-body');
 
-        // Show flash message
-        function showFlashMessage(message, color) {
-            flashMessage.textContent = message;
-            flashMessage.className = 'flash-message ' + color;
-            flashMessage.style.display = 'flex';
-            setTimeout(() => {
-                flashMessage.style.display = 'none';
-            }, 1500);
-        }
-
         // Format score as 1,000,000 €
         function formatScore(score) {
             return score.toLocaleString('it-IT') + ' €';
@@ -434,7 +393,10 @@
         function playGame() {
             const randomOutcome = Math.random();
             if (randomOutcome < 0.01) {
-                showFlashMessage('DEAD', 'dead');
+                document.getElementById('dead-screen').style.display = 'flex';
+                setTimeout(() => {
+                    document.getElementById('dead-screen').style.display = 'none';
+                }, 1500); // 1.5 secondi
                 currentWinnings = 0;
                 currentWinningsDisplay.textContent = formatScore(currentWinnings);
             } else {
@@ -446,7 +408,7 @@
         // Save score to leaderboard
         function saveScore() {
             if (currentWinnings > 0) {
-                showFlashMessage('RICH', 'rich');
+                // Puoi aggiungere un messaggio di vittoria qui se vuoi
             }
             if (currentWinnings > highScore) {
                 highScore = currentWinnings;
@@ -464,56 +426,56 @@
             }
         }
 
-// Show leaderboard
-function showLeaderboard() {
-    leaderboardBody.innerHTML = '';
-    const scoresRef = database.ref('scores');
-    scoresRef.once('value').then((snapshot) => {
-        const scores = snapshot.val();
-        const scoresArray = [];
-        for (const key in scores) {
-            if (scores.hasOwnProperty(key)) {
-                scoresArray.push(scores[key]);
-            }
+        // Show leaderboard
+        function showLeaderboard() {
+            leaderboardBody.innerHTML = '';
+            const scoresRef = database.ref('scores');
+            scoresRef.once('value').then((snapshot) => {
+                const scores = snapshot.val();
+                const scoresArray = [];
+                for (const key in scores) {
+                    if (scores.hasOwnProperty(key)) {
+                        scoresArray.push(scores[key]);
+                    }
+                }
+
+                // Ordinare i punteggi in ordine decrescente
+                scoresArray.sort((a, b) => b.score - a.score);
+
+                // Mostrare tutti i punteggi (non limitare a 1000)
+                scoresArray.forEach((entry, index) => {
+                    const row = document.createElement('tr');
+
+                    const rankCell = document.createElement('td');
+                    rankCell.className = 'rank-cell';
+                    rankCell.textContent = index + 1;
+
+                    const nicknameCell = document.createElement('td');
+                    nicknameCell.className = 'nickname-cell';
+                    nicknameCell.textContent = entry.nickname;
+
+                    const countryCell = document.createElement('td');
+                    countryCell.className = 'country-cell';
+                    countryCell.textContent = entry.country;
+
+                    const scoreCell = document.createElement('td');
+                    scoreCell.className = 'score-cell';
+                    scoreCell.textContent = formatScore(entry.score);
+
+                    row.appendChild(rankCell);
+                    row.appendChild(nicknameCell);
+                    row.appendChild(countryCell);
+                    row.appendChild(scoreCell);
+
+                    leaderboardBody.appendChild(row);
+                });
+            });
+
+            // Show leaderboard screen
+            gameScreen.classList.add('game-hidden');
+            leaderboardScreen.classList.remove('game-hidden');
+            leaderboardScreen.classList.add('game-active');
         }
-
-        // Ordinare i punteggi in ordine decrescente
-        scoresArray.sort((a, b) => b.score - a.score);
-
-        // Mostrare tutti i punteggi (non limitare a 1000)
-        scoresArray.forEach((entry, index) => {
-            const row = document.createElement('tr');
-
-            const rankCell = document.createElement('td');
-            rankCell.className = 'rank-cell';
-            rankCell.textContent = index + 1;
-
-            const nicknameCell = document.createElement('td');
-            nicknameCell.className = 'nickname-cell';
-            nicknameCell.textContent = entry.nickname;
-
-            const countryCell = document.createElement('td');
-            countryCell.className = 'country-cell';
-            countryCell.textContent = entry.country;
-
-            const scoreCell = document.createElement('td');
-            scoreCell.className = 'score-cell';
-            scoreCell.textContent = formatScore(entry.score);
-
-            row.appendChild(rankCell);
-            row.appendChild(nicknameCell);
-            row.appendChild(countryCell);
-            row.appendChild(scoreCell);
-
-            leaderboardBody.appendChild(row);
-        });
-    });
-
-    startScreen.classList.add('game-hidden');
-    gameScreen.classList.add('game-hidden');
-    leaderboardScreen.classList.remove('game-hidden');
-    leaderboardScreen.classList.add('game-active');
-}
 
         // Event listeners
         startGameBtn.addEventListener('click', () => {
@@ -541,29 +503,19 @@ function showLeaderboard() {
 
         viewLeaderboardBtn.addEventListener('click', showLeaderboard);
 
-        playButton.addEventListener('click', () => {
-            playButton.classList.add('active');
-            playGame();
-            setTimeout(() => {
-                playButton.classList.remove('active');
-            }, 200);
-        });
+        playButton.addEventListener('click', playGame);
 
         stopButton.addEventListener('click', () => {
-            stopButton.classList.add('active');
             saveScore();
             currentWinnings = 0;
             currentWinningsDisplay.textContent = formatScore(currentWinnings);
-            setTimeout(() => {
-                stopButton.classList.remove('active');
-            }, 200);
         });
 
         backToStartBtn.addEventListener('click', () => {
             leaderboardScreen.classList.add('game-hidden');
-            startScreen.classList.remove('game-hidden');
+            gameScreen.classList.remove('game-hidden');
+            gameScreen.classList.add('game-active');
         });
     </script>
 </body>
 </html>
-
